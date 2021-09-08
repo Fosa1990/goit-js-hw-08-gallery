@@ -64,3 +64,58 @@ const galleryItems = [
   },
 ];
 
+const refs = {
+  gallery: document.querySelector('ul.js-gallery'),
+  modal: document.querySelector('.js-lightbox'),
+  modalImage: document.querySelector('img.lightbox__image'),
+}
+
+
+refs.gallery.insertAdjacentHTML('afterbegin', createGalleryItem(galleryItems))
+
+refs.gallery.addEventListener('click', onClickGalleryitem)
+refs.modal.addEventListener('click', e => {
+  if (
+    e.target.classList.contains('lightbox__overlay') ||
+    e.target.dataset.action === 'close-lightbox')
+    closeModal()
+}
+)
+
+function createGalleryItem(items) {
+  return items
+    .map((element) =>
+  `<li class="gallery__item">
+    <a class="gallery__link" href="${element.preview}">
+    <img
+      class="gallery__image"
+      src="${element.preview}"
+      data-source="${element.original}"
+      alt="${element.description}"
+    />
+  </a>
+</li>`)
+    .join('')
+}
+
+
+function onClickGalleryitem(e) {
+  if (!e.target.classList.contains('gallery__image')) return;
+  e.preventDefault();
+  refs.modal.classList.add('is-open');
+  setModalImgSrcAndAlt(e.target.dataset.source, e.target.alt);
+}
+
+function setModalImgSrcAndAlt(src, alt) {
+  refs.modalImage.src = src;
+  refs.modalImage.alt = alt;
+}
+
+function closeModal(e) {
+  refs.modal.classList.remove('is-open');
+}
+
+function OnKeyDown(e) {
+  if (!refs.modal.classList.contains('is-open')) return
+  e.code = "Escape"
+}
